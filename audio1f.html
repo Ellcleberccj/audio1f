@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Áudio</title>
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.6.7/plyr.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-  <style>
+  <style>l
     @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
       
     body {
@@ -16,231 +17,159 @@
     .audio-container {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       font-family: 'Open Sans', sans-serif;
-      cursor: pointer;
-      width: 100%;
-      padding: 10px;
+      justify-content: flex-start;
+      cursor: pointer; 
+      width: 100px;
     }
 
-    .play-button {
-      background: none;
-      border: none;
-      font-size: 18px;
-      color: #666;
-      cursor: pointer;
-      margin-right: 10px;
-      padding: 0;
-      width: 30px;
-      height: 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .play-button.playing {
-      color: #007bff;
-    }
-
-    .audio-info {
-      display: flex;
-      flex-direction: column;
-      margin-right: 15px;
-      min-width: 0;
-    }
-
-    .waveform-container {
-      position: relative;
-      height: 30px;
-      margin: 2px 0;
-      background-image: url('https://i.ibb.co/6Rq3d40H/transferir.png');
-      background-repeat: no-repeat;
-      background-size: contain;
-      background-position: left center;
-      width: 180px;
-    }
-
-    .progress-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      background: linear-gradient(to right, #007bff 0%, #007bff 100%);
-      width: 0%;
-      transition: width 0.1s ease;
-      opacity: 0.3;
-    }
-
-    .time-display {
-      font-size: 11px;
-      color: #666;
-      margin-top: 2px;
-      text-align: left;
-    }
-
-    .time-display.playing {
-      color: #007bff;
-    }
-
-    .profile-section {
-      display: flex;
-      align-items: center;
-    }
-
-    .profile-image {
-      width: 40px;
-      height: 40px;
+    .audio-container img {
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       object-fit: cover;
-      position: relative;
+      padding-right: 8px;
+      padding-left: 10px;
     }
 
-    .microphone-icon {
-      position: absolute;
-      right: -3px;
-      bottom: -3px;
-      background: white;
-      border-radius: 50%;
-      padding: 2px;
-      font-size: 12px;
+    .audio-container .microphone-icon {
+      position: relative;
+      margin-left: -67px;
+      margin-bottom: -25px;
+      font-size: 22px;
       color: #4ad954;
     }
 
-    .microphone-icon.blue {
-      color: #007bff;
+    .audio-container .microphone-icon.blue {
+      color: #3db8ee;
     }
 
-    .hidden {
+    .plyr--audio .plyr__control.plyr__tab-focus,
+    .plyr--audio .plyr__control:hover,
+    .plyr--audio .plyr__control[aria-expanded=false] {
+      background: rgba(0, 0, 0, 0);
+      background: var(--plyr-audio-control-background-hover, var(--plyr-color-main, var(--plyr-color-main, rgba(0, 0, 0, 0))));
+      color: rgba(0, 0, 0, 0);
+      color: var(--plyr-audio-control-color-hover, #797979)
+    }
+
+    .plyr--audio .plyr__controls {
+      background: rgba(0, 0, 0, 0);
+      background: var(--plyr-audio-controls-background, rgba(0, 0, 0, 0));
+      border-radius: inherit;
+      color: #4a5464;
+      color: var(--plyr-audio-control-color,#4a5464);
+      margin-left: 0px;
+      padding: 0px;
+    }
+
+    .plyr--audio .plyr__control--overlaid .plyr__control__icon {
+      font-size: 33px;
+    }
+
+    .plyr--full-ui input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      border: 0;
+      border-radius: 100%;
+      box-shadow: 0 1px 1px rgba(35,40,47,.15),0 0 0 1px rgba(35,40,47,.2);
+      box-shadow: var(--plyr-range-thumb-shadow,0 1px 1px rgba(35,40,47,.15),0 0 0 1px rgba(35,40,47,.2));
+      height: 13px;
+      height: var(--plyr-range-thumb-height,13px);
+      margin-top: -4px;
+      margin-top: calc(var(--plyr-range-thumb-height,13px)/2*-1 - var(--plyr-range-track-height,5px)/2*-1);
+      position: relative;
+      -webkit-transition: all .2s ease;
+      transition: all .2s ease;
+      width: 13px;
+      width: var(--plyr-range-thumb-height,13px);
+      background: var(--range-thumb-background, #4ad954);
+    }  
+
+    .plyr--full-ui input[type=range].blue::-webkit-slider-thumb {
+      background: var(--range-thumb-background-active, #3db8ee);
+    }
+  
+    .hide {
       display: none;
     }
 
-    audio {
+    .plyr__controls .plyr__controls__item.plyr__progress__container:first-child,
+    .plyr__controls .plyr__controls__item.plyr__time+.plyr__time,
+    .plyr__controls .plyr__controls__item.plyr__time:first-child {
+      padding-left: 0;
+      display: block;
+      margin-left: 7.5px;
+    }
+
+    .plyr__time+.plyr__time:before {
+      content: "";
+      margin-right: var(--plyr-control-spacing);
+    }
+
+    .plyr--audio .plyr__controls .plyr__controls__item.plyr__time--current.hide,
+    .plyr--audio .plyr__controls .plyr__controls__item.plyr__time--duration.hide {
       display: none;
     }
+
   </style>
 </head>
 <body>
   <div class="audio-container" id="audioContainer">
-    <button class="play-button" id="playButton">
-      <i class="fas fa-play" id="playIcon"></i>
-    </button>
-    
-    <div class="audio-info">
-      <div class="waveform-container" id="waveformContainer">
-        <div class="progress-overlay" id="progressOverlay"></div>
-      </div>
-      <div class="time-display" id="timeDisplay">0:01</div>
+    <!-- Cole o link do Seu áudio Abaixo-->
+    <audio class="plyr" src="https://minio-production-c185.up.railway.app/typebot/public/workspaces/cls53hzp60001qwv2c0iyw47k/typebots/cmbctmge2000e13twj6qyj93k/blocks/nafjsocec3mjmtpwc5roza50?v=1748735256347"></audio>
+    <!-- Cole o link da Sua imagem Abaixo-->
+    <img src="https://i.ibb.co/fGyYGTL0/491895114-17920743987078576-8279434177882857060-n-1.jpg" alt="Imagem">
+    <div class="microphone-icon">
+      <i class="fas fa-microphone"></i>
     </div>
-    
-    <div class="profile-section">
-      <div style="position: relative;">
-        <img src="https://i.ibb.co/fGyYGTL0/491895114-17920743987078576-8279434177882857060-n-1.jpg" alt="Imagem" class="profile-image">
-        <div class="microphone-icon" id="microphoneIcon">
-          <i class="fas fa-microphone"></i>
-        </div>
-      </div>
-    </div>
-    
-    <audio id="audioElement" preload="metadata">
-      <source src="https://minio-production-c185.up.railway.app/typebot/public/workspaces/cls53hzp60001qwv2c0iyw47k/typebots/cmbctmge2000e13twj6qyj93k/blocks/kttr8n1x4tapnlr631hcb42j?v=1748732981579" type="audio/mpeg">
-    </audio>
   </div>
   
+  <script src="https://cdn.plyr.io/3.6.7/plyr.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const audioElement = document.getElementById('audioElement');
-      const playButton = document.getElementById('playButton');
-      const playIcon = document.getElementById('playIcon');
-      const timeDisplay = document.getElementById('timeDisplay');
-      const progressOverlay = document.getElementById('progressOverlay');
-      const microphoneIcon = document.getElementById('microphoneIcon');
-      const waveformContainer = document.getElementById('waveformContainer');
-      
-      let isPlaying = false;
-      let duration = 0;
-
-      // Função para formatar tempo
-      function formatTime(seconds) {
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-      }
-
-      // Quando os metadados são carregados
-      audioElement.addEventListener('loadedmetadata', function() {
-        duration = audioElement.duration;
-        timeDisplay.textContent = formatTime(duration);
+      const player = new Plyr('.plyr', {
+        controls: ['play', 'progress', 'current-time', 'duration']
       });
 
-      // Atualizar progresso
-      audioElement.addEventListener('timeupdate', function() {
-        if (duration > 0) {
-          const progress = (audioElement.currentTime / duration) * 100;
-          progressOverlay.style.width = progress + '%';
-          
-          if (isPlaying) {
-            timeDisplay.textContent = formatTime(audioElement.currentTime);
-          }
-        }
+      const audioElement = document.querySelector('.plyr');
+      const currentTimeElement = document.querySelector('.plyr__time--current');
+      const durationElement = document.querySelector('.plyr__time--duration');
+      const microphoneIcon = document.querySelector('.microphone-icon');
+
+      currentTimeElement.classList.add('hide'); // Adiciona a classe 'hide' ao iniciar
+
+      audioElement.addEventListener('play', function() {
+        currentTimeElement.classList.remove('hide');
+        durationElement.classList.add('hide');
+        microphoneIcon.classList.add('blue'); // Adiciona a classe 'blue' para alterar a cor do ícone
+        audioElement.classList.add('blue'); // Adiciona a classe 'blue' para alterar o background do controle deslizante
+        audioElement.style.setProperty('--range-thumb-background', '#3db8ee');
       });
 
-      // Quando o áudio termina
-      audioElement.addEventListener('ended', function() {
-        isPlaying = false;
-        playIcon.className = 'fas fa-play';
-        playButton.classList.remove('playing');
-        timeDisplay.classList.remove('playing');
-        microphoneIcon.classList.remove('blue');
-        progressOverlay.style.width = '0%';
-        timeDisplay.textContent = formatTime(duration);
+      audioElement.addEventListener('pause', function() {
+        currentTimeElement.classList.add('hide');
+        durationElement.classList.remove('hide');
       });
 
-      // Controle de play/pause
-      function togglePlayPause() {
-        if (isPlaying) {
-          audioElement.pause();
-          isPlaying = false;
-          playIcon.className = 'fas fa-play';
-          playButton.classList.remove('playing');
-          timeDisplay.classList.remove('playing');
-          microphoneIcon.classList.remove('blue');
-          timeDisplay.textContent = formatTime(duration);
-        } else {
-          audioElement.play();
-          isPlaying = true;
-          playIcon.className = 'fas fa-pause';
-          playButton.classList.add('playing');
-          timeDisplay.classList.add('playing');
-          microphoneIcon.classList.add('blue');
-        }
-      }
-
-      // Event listeners
-      playButton.addEventListener('click', function(e) {
-        e.stopPropagation();
-        togglePlayPause();
+      const audioContainer = document.getElementById('audioContainer');
+      audioContainer.addEventListener('click', function() {
+        const playButton = audioContainer.querySelector('.plyr__controls button[data-plyr="play"]');
+        playButton.click();
       });
 
-      // Clique na área de ondas para controlar posição
-      waveformContainer.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const rect = waveformContainer.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        const clickPercent = clickX / rect.width;
-        
-        if (duration > 0) {
-          audioElement.currentTime = duration * clickPercent;
-        }
+      const playPauseButton = document.getElementById('audioContainer').querySelector('.plyr__controls button[data-plyr="play"]');
+      const audioBox = document.querySelector('.audio-box');
+      playPauseButton.addEventListener('click', function() {
+        const playButton = audioContainer.querySelector('.plyr__controls button[data-plyr="play"]');
+        playButton.click();
       });
 
-      // Clique no container inteiro
-      document.getElementById('audioContainer').addEventListener('click', function(e) {
-        if (e.target === this || e.target.closest('.audio-info')) {
-          togglePlayPause();
-        }
+      audioBox.addEventListener('click', function(event) {
+        event.stopPropagation(); 
+        const playButton = audioContainer.querySelector('.plyr__controls button[data-plyr="play"]');
+        playButton.click();
       });
-
-      // Carregar metadados ao iniciar
-      audioElement.load();
     });
   </script>
 </body>
