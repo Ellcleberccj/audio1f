@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Áudio</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap');
+      
+    body {
+      height: 100vh;
+      overflow: hidden;
+      margin: 0px;
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }    
+
+    .audio-container {
+      display: flex;
+      align-items: center;
+      font-family: 'Open Sans', sans-serif;
+      background: white;
+      border-radius: 25px;
+      padding: 15px 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      cursor: pointer;
+      min-width: 300px;
+    }
+
+    .play-button {
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: #666;
+      cursor: pointer;
+      margin-right: 15px;
+      padding: 5px;
+    }
+
+    .play-button.playing {
+      color: #007bff;
+    }
+
+    .audio-info {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      margin-right: 15px;
+    }
+
+    .waveform-container {
+      position: relative;
+      height: 40px;
+      margin: 5px 0;
+      background-image: url('https://i.ibb.co/6Rq3d40H/transferir.png');
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position: left center;
+      width: 100%;
+    }
+
+    .progress-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: linear-gradient(to right, #007bff 0%, #007bff 100%);
+      width: 0%;
+      transition: width 0.1s ease;
+      opacity: 0.3;
+    }
+
+    .time-display {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .time-display.playing {
+      color: #007bff;
+    }
+
+    .profile-section {
+      display: flex;
+      align-items: center;
+    }
+
+    .profile-image {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      position: relative;
+    }
+
+    .microphone-icon {
+      position: absolute;
+      right: -5px;
+      bottom: -5px;
+      background: white;
+      border-radius: 50%;
+      padding: 3px;
+      font-size: 16px;
+      color: #4ad954;
+    }
+
+    .microphone-icon.blue {
+      color: #007bff;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="audio-container" id="audioContainer">
+    <button class="play-button" id="playButton">
+      <i class="fas fa-play" id="playIcon"></i>
+    </button>
+    
+    <div class="audio-info">
+      <div class="waveform-container" id="waveformContainer">
+        <div class="progress-overlay" id="progressOverlay"></div>
+      </div>
+      <div class="time-display" id="timeDisplay">0:01</div>
+    </div>
+    
+    <div class="profile-section">
+      <div style="position: relative;">
+        <img src="https://i.ibb.co/fGyYGTL0/491895114-17920743987078576-8279434177882857060-n-1.jpg" alt="Imagem" class="profile-image">
+        <div class="microphone-icon" id="microphoneIcon">
+          <i class="fas fa-microphone"></i>
+        </div>
+      </div>
+    </div>
+    
+    <audio id="audioElement" preload="metadata">
+      <source src="https://minio-production-c185.up.railway.app/typebot/public/workspaces/cls53hzp60001qwv2c0iyw47k/typebots/cmbctmge2000e13twj6qyj93k/blocks/kttr8n1x4tapnlr631hcb42j?v=1748732981579" type="audio/mpeg">
+    </audio>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const audioElement = document.getElementById('audioElement');
+      const playButton = document.getElementById('playButton');
+      const playIcon = document.getElementById('playIcon');
+      const timeDisplay = document.getElementById('timeDisplay');
+      const progressOverlay = document.getElementById('progressOverlay');
+      const microphoneIcon = document.getElementById('microphoneIcon');
+      const waveformContainer = document.getElementById('waveformContainer');
+      
+      let isPlaying = false;
+      let duration = 0;
+
+      // Função para formatar tempo
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+      }
+
+      // Quando os metadados são carregados
+      audioElement.addEventListener('loadedmetadata', function() {
+        duration = audioElement.duration;
+        timeDisplay.textContent = formatTime(duration);
+      });
+
+      // Atualizar progresso
+      audioElement.addEventListener('timeupdate', function() {
+        if (duration > 0) {
+          const progress = (audioElement.currentTime / duration) * 100;
+          progressOverlay.style.width = progress + '%';
+          
+          if (isPlaying) {
+            timeDisplay.textContent = formatTime(audioElement.currentTime);
+          }
+        }
+      });
+
+      // Quando o áudio termina
+      audioElement.addEventListener('ended', function() {
+        isPlaying = false;
+        playIcon.className = 'fas fa-play';
+        playButton.classList.remove('playing');
+        timeDisplay.classList.remove('playing');
+        microphoneIcon.classList.remove('blue');
+        progressOverlay.style.width = '0%';
+        timeDisplay.textContent = formatTime(duration);
+      });
+
+      // Controle de play/pause
+      function togglePlayPause() {
+        if (isPlaying) {
+          audioElement.pause();
+          isPlaying = false;
+          playIcon.className = 'fas fa-play';
+          playButton.classList.remove('playing');
+          timeDisplay.classList.remove('playing');
+          microphoneIcon.classList.remove('blue');
+          timeDisplay.textContent = formatTime(duration);
+        } else {
+          audioElement.play();
+          isPlaying = true;
+          playIcon.className = 'fas fa-pause';
+          playButton.classList.add('playing');
+          timeDisplay.classList.add('playing');
+          microphoneIcon.classList.add('blue');
+        }
+      }
+
+      // Event listeners
+      playButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        togglePlayPause();
+      });
+
+      // Clique na área de ondas para controlar posição
+      waveformContainer.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const rect = waveformContainer.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickPercent = clickX / rect.width;
+        
+        if (duration > 0) {
+          audioElement.currentTime = duration * clickPercent;
+        }
+      });
+
+      // Clique no container inteiro
+      document.getElementById('audioContainer').addEventListener('click', function(e) {
+        if (e.target === this || e.target.closest('.audio-info')) {
+          togglePlayPause();
+        }
+      });
+
+      // Carregar metadados ao iniciar
+      audioElement.load();
+    });
+  </script>
+</body>
+</html>
